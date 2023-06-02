@@ -24,7 +24,9 @@ const login = async (req, res, next) => {
 
         const token = await user.generateAuthToken();
 
-        res.send({ user, token });
+        const userObject = user.getPublicProfile();
+
+        res.send({ userObject, token });
     } catch (error) {
         res.status(409).send({ error: error.message });
     }
