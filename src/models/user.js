@@ -3,6 +3,7 @@ const { isEmail } = require("validator");
 const PasswordValidator = require("password-validator");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const { productSchema } = require("../models/product");
 
 const userSchema = new mongoose.Schema(
     {
@@ -57,6 +58,11 @@ const userSchema = new mongoose.Schema(
                 }
             },
         },
+        address: {
+            type: String,
+            default: "12 Erelu Danisa Street, Ijeshatedo, Lagos",
+        },
+        cart: [productSchema],
         token: {
             type: String,
         },

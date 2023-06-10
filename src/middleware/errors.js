@@ -3,7 +3,6 @@ module.exports = (err, req, res, next) => {
         let errorMessage = "";
         if (err.errors) {
             const fields = Object.keys(err.errors);
-
             errorMessage = err.errors[fields[0]].message;
         }
 
@@ -11,7 +10,15 @@ module.exports = (err, req, res, next) => {
             errorMessage = "Another account already exists with that email.";
         }
 
-        return res.status(400).send({ error: errorMessage });
+        if (
+            err?.code === 11000 &&
+            err?.message.includes("duplicate") &&
+            err?.message.includes("products")
+        ) {
+            errorMessage = "Another product already has that name.";
+        }
+
+        return res.status(400).send({ error: errorMessage || err.message });
     } catch (error) {
         res.status(500).send({
             error: "A unknown error occurred. Please try again.",
