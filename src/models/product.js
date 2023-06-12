@@ -20,8 +20,12 @@ const productSchema = new mongoose.Schema(
             max: [5, "Please enter a rating number between 1 and 5."],
         },
         image: {
-            type: Buffer,
+            type: String,
             required: [true, "Please provide a product image"],
+        },
+        popular: {
+            type: Boolean,
+            default: false,
         },
     },
     {

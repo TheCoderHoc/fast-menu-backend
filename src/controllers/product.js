@@ -1,10 +1,22 @@
+const fs = require("fs");
+const path = require("path");
 const sharp = require("sharp");
 const { Product } = require("../models/product");
 
 // GET ALL PRODUCTS
 const getAllProducts = async (req, res) => {
     try {
-        const products = await Product.find({});
+        const match = {};
+
+        if (req.query.filter === "popular") {
+            match.popular = true;
+        }
+
+        if (req.query.filter === "all") {
+            match = {};
+        }
+
+        const products = await Product.find(match).select("-image");
 
         res.send({ products });
     } catch (error) {
@@ -15,7 +27,9 @@ const getAllProducts = async (req, res) => {
 // GET A SINGLE PRODUCT
 const getSingleProduct = async (req, res) => {
     try {
-        const product = await Product.findById({ _id: req.params.id });
+        const product = await Product.findById({ _id: req.params.id }).select(
+            "-image"
+        );
 
         if (!product) {
             res.status(404).send({ error: "Product not found" });
@@ -35,14 +49,21 @@ const addNewProduct = async (req, res, next) => {
             throw new Error("Please provide a product image.");
         }
 
-        const buffer = await sharp(req.file.buffer)
+        const imagePath =
+            path.join(__dirname, "../assets/uploads") +
+            `/${req.file.fieldname}-${Date.now()}.png`;
+
+        // RESIZE THE UPLOADED IMAGE AND SAVE TO ASSETS/UPLOADS FOLDER
+        await sharp(req.file.path)
             .resize({ width: 500, height: 500 })
-            .png()
-            .toBuffer();
+            .toFile(imagePath);
+
+        // DELETE THE ORIGINAL UPLOADED IMAGE
+        fs.unlinkSync(req.file.path);
 
         const product = new Product({
             ...req.body,
-            image: buffer,
+            image: imagePath,
         });
 
         await product.save();
@@ -92,10 +113,23 @@ const deleteProduct = async (req, res) => {
     }
 };
 
+const getProductImage = async (req, res) => {
+    try {
+        const productId = req.params.id;
+
+        const product = await Product.findById(productId);
+
+        res.sendFile(product.image);
+    } catch (error) {
+        res.status(500).send({ error: error.message });
+    }
+};
+
 module.exports = {
     getAllProducts,
     getSingleProduct,
     addNewProduct,
     updateProduct,
     deleteProduct,
+    getProductImage,
 };

@@ -1,3 +1,4 @@
+const path = require("path");
 const express = require("express");
 const multer = require("multer");
 
@@ -7,14 +8,29 @@ const {
     addNewProduct,
     updateProduct,
     deleteProduct,
+    getProductImage,
 } = require("../controllers/product");
 
 const router = new express.Router();
 
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        const destFolder = path.join(__dirname, "../assets/uploads");
+
+        cb(null, destFolder);
+    },
+
+    filename: function (req, file, cb) {
+        const fileExtension = file.mimetype.split("/")[1];
+
+        cb(null, `${file.fieldname}-${Date.now()}.${fileExtension}`);
+    },
+});
+
 const upload = multer({
-    // RESTRICT PRODUCT IMAGE FILE SIZE TO 5MB
+    // RESTRICT PRODUCT IMAGE FILE SIZE TO 1MB
     limits: {
-        fileSize: 5000000,
+        fileSize: 1000000,
     },
 
     // ONLY ACCEPT PNG JPEG AND PNG IMAGE FILE FORMATS
@@ -26,6 +42,8 @@ const upload = multer({
 
         callback(undefined, true);
     },
+
+    storage: storage,
 });
 
 // GET ALL PRODUCTS
@@ -42,5 +60,8 @@ router.patch("/products/:id", updateProduct);
 
 // DELETE A PRODUCT
 router.delete("/products/:id", deleteProduct);
+
+// GET PRODUCT IMAGE
+router.get("/products/:id/image", getProductImage);
 
 module.exports = router;
