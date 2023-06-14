@@ -1,7 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 const sharp = require("sharp");
-const { Product } = require("../models/product");
+const Product = require("../models/product");
 
 // GET ALL PRODUCTS
 const getAllProducts = async (req, res) => {
@@ -54,9 +54,8 @@ const addNewProduct = async (req, res, next) => {
             `/${req.file.fieldname}-${Date.now()}.png`;
 
         // RESIZE THE UPLOADED IMAGE AND SAVE TO ASSETS/UPLOADS FOLDER
-        await sharp(req.file.path)
-            .resize({ width: 500, height: 500 })
-            .toFile(imagePath);
+        await sharp(req.file.path).toFile(imagePath);
+        // .resize({ width: 500, height: 500 })
 
         // DELETE THE ORIGINAL UPLOADED IMAGE
         fs.unlinkSync(req.file.path);
