@@ -8,12 +8,9 @@ const getCartProducts = async (req, res) => {
         // RETRIEVE THE USER ID FROM THE AUTH MIDDLEWARE
         const userId = req.user._id;
 
-        const cart = await Cart.findOne({ user: userId })
-            .populate("products")
-            .exec();
+        const cart = await Cart.findOne({ user: userId });
 
         res.send({ cart: cart.toJSON({ virtuals: true }) });
-        // res.send({ cart });
     } catch (error) {
         res.status(500).send({ error: error.message });
     }
@@ -25,7 +22,7 @@ const addProductToCart = async (req, res) => {
         // RETRIEVE THE USER ID FROM THE AUTH MIDDLEWARE
         const userId = req.user._id;
 
-        // RETRIEVE THE ID AND QUANTITY OF THE PRODUCT TO ADD TO THE USER CART
+        // RETRIEVE THE ID OF THE PRODUCT TO ADD TO THE USER CART
         const { productId } = req.body;
 
         // FIND THE PRODUCT WHOSE ID WAS SENT WITH THE INTENTION OF ADDING TO CART
@@ -76,10 +73,7 @@ const addProductToCart = async (req, res) => {
             // SAVE THE NEW CART TO THE DATABASE
             await newCart.save();
 
-            res.send({ cart: cart.toJSON({ virtuals: true }) });
-
-            // res.send(cart.toJSON({ virtuals: true }));
-            // res.send({ cart });
+            res.send({ cart: cart?.toJSON({ virtuals: true }) });
         }
     } catch (error) {
         res.status(500).send({ error: error.message });
@@ -109,8 +103,8 @@ const deleteCartProduct = async (req, res) => {
             // SAVE THE UPDATE CART TO THE DATABASE
             await cart.save();
 
-            // SEND BACK THE UPDATED CART TO THE CLIENT WITH RESPONSE: 201
-            res.send({ cart: cart.toJSON({ virtuals: true }) });
+            // SEND BACK THE UPDATED CART TO THE CLIENT WITH RESPONSE: 200
+            res.send({ cart: cart?.toJSON({ virtuals: true }) });
         }
     } catch (error) {
         res.status(500).send({ error: error.message });
