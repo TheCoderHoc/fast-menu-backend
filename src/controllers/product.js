@@ -6,6 +6,10 @@ const Product = require("../models/product");
 // GET ALL PRODUCTS
 const getAllProducts = async (req, res) => {
     try {
+        // PAGINATION
+        const { page = 1, limit = 6 } = req.query;
+
+        // FILTERING AND SORTING
         let match = {
             category: req.query.category,
         };
@@ -26,9 +30,16 @@ const getAllProducts = async (req, res) => {
             [req.query.sortBy]: req.query.order,
         };
 
-        const products = await Product.find(match).select("-image").sort(sort);
+        const products = await Product.find(match)
+            .select("-image")
+            .sort(sort)
+            .limit(limit * 1)
+            .skip((page - 1) * limit)
+            .exec();
 
-        res.send({ products });
+        const totalProducts = await Product.find(match).countDocuments();
+
+        res.send({ products, totalProducts });
     } catch (error) {
         res.status(500).send({ error: error.message });
     }

@@ -8,21 +8,25 @@ const productSchema = new mongoose.Schema(
             unique: [true, "You already have a product with this name."],
             trim: true,
         },
+
         price: {
             type: Number,
             required: [true, "Please provide a product price."],
             min: [1, "Please enter a valid product price."],
         },
+
         rating: {
             type: Number,
             required: [true, "Please enter a rating number between 1 and 5."],
             min: [1, "Please enter a rating number between 1 and 5."],
             max: [5, "Please enter a rating number between 1 and 5."],
         },
+
         image: {
             type: String,
             required: [true, "Please provide a product image."],
         },
+        
         category: {
             type: String,
             required: [true, "Please provide a product category."],
