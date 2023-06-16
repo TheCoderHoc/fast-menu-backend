@@ -6,17 +6,27 @@ const Product = require("../models/product");
 // GET ALL PRODUCTS
 const getAllProducts = async (req, res) => {
     try {
-        const match = {};
+        let match = {
+            category: req.query.category,
+        };
 
         if (req.query.filter === "popular") {
             match.popular = true;
         }
 
         if (req.query.filter === "all") {
-            match = {};
+            match = { ...match };
         }
 
-        const products = await Product.find(match).select("-image");
+        if (req.query.category === "all") {
+            delete match.category;
+        }
+
+        let sort = {
+            [req.query.sortBy]: req.query.order,
+        };
+
+        const products = await Product.find(match).select("-image").sort(sort);
 
         res.send({ products });
     } catch (error) {

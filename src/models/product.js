@@ -21,7 +21,11 @@ const productSchema = new mongoose.Schema(
         },
         image: {
             type: String,
-            required: [true, "Please provide a product image"],
+            required: [true, "Please provide a product image."],
+        },
+        category: {
+            type: String,
+            required: [true, "Please provide a product category."],
         },
         popular: {
             type: Boolean,
