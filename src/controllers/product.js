@@ -7,28 +7,41 @@ const Product = require("../models/product");
 const getAllProducts = async (req, res) => {
     try {
         // PAGINATION
-        const { page = 1, limit = 6 } = req.query;
+        const {
+            category,
+            filter,
+            sortBy,
+            order,
+            page = 1,
+            limit = 6,
+            search,
+        } = req.query;
 
         // FILTERING AND SORTING
         let match = {
-            category: req.query.category,
+            category,
         };
 
-        if (req.query.filter === "popular") {
+        if (filter === "popular") {
             match.popular = true;
         }
 
-        if (req.query.filter === "all") {
+        if (filter === "all") {
             match = { ...match };
         }
 
-        if (req.query.category === "all") {
+        if (category === "all") {
             delete match.category;
         }
 
         let sort = {
-            [req.query.sortBy]: req.query.order,
+            [sortBy]: order,
         };
+
+        // SEARCHING
+        if (search) {
+            match = { ...match, name: { $regex: search, $options: "i" } };
+        }
 
         const products = await Product.find(match)
             .select("-image")
