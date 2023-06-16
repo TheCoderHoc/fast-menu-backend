@@ -5,6 +5,7 @@ const multer = require("multer");
 const {
     getAllProducts,
     getSingleProduct,
+    getPopularProducts,
     addNewProduct,
     updateProduct,
     deleteProduct,
@@ -45,6 +46,9 @@ const upload = multer({
 
     storage: storage,
 });
+
+// GET POPULAR PRODUCTS
+router.get("/products/popular", getPopularProducts);
 
 // GET ALL PRODUCTS
 router.get("/products", getAllProducts);

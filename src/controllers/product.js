@@ -52,6 +52,17 @@ const getSingleProduct = async (req, res) => {
     }
 };
 
+// GET POPULAR PRODUCTS
+const getPopularProducts = async (req, res) => {
+    try {
+        const products = await Product.find({ popular: true }).select("-image");
+
+        res.send({ products });
+    } catch (error) {
+        res.status(500).send({ error: error.message });
+    }
+};
+
 // ADD A NEW PRODUCT
 const addNewProduct = async (req, res, next) => {
     try {
@@ -137,6 +148,7 @@ const getProductImage = async (req, res) => {
 module.exports = {
     getAllProducts,
     getSingleProduct,
+    getPopularProducts,
     addNewProduct,
     updateProduct,
     deleteProduct,
