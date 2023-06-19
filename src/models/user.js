@@ -57,10 +57,57 @@ const userSchema = new mongoose.Schema(
                 }
             },
         },
-        address: {
+        phone: {
             type: String,
-            default: "12 Erelu Danisa Street, Ijeshatedo, Lagos",
+            unique: true,
+            validate(value) {
+                if (value.length !== 11) {
+                    throw new Error("Please enter a valid phone number.");
+                }
+            },
         },
+
+        subscriptionPlan: {
+            type: String,
+            default: "Basic",
+        },
+
+        address: {
+            country: {
+                type: String,
+                trim: true,
+            },
+
+            state: {
+                type: String,
+                trim: true,
+            },
+
+            city: {
+                type: String,
+                trim: true,
+            },
+
+            street: {
+                type: String,
+                trim: true,
+            },
+
+            postalCode: {
+                type: Number,
+                trim: true,
+            },
+        },
+
+        role: {
+            type: String,
+            default: "user",
+        },
+
+        avatar: {
+            type: String,
+        },
+
         token: {
             type: String,
         },
@@ -69,7 +116,6 @@ const userSchema = new mongoose.Schema(
         timestamps: true,
     }
 );
-
 
 userSchema.pre("save", async function (next) {
     const user = this;
