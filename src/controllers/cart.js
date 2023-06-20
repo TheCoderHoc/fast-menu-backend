@@ -111,8 +111,27 @@ const deleteCartProduct = async (req, res) => {
     }
 };
 
+const emptyCart = async (req, res) => {
+    try {
+        const cart = await Cart.findOne({ user: req.user._id });
+
+        if (!cart) {
+            throw new Error("Operation failed. Please try again later!");
+        }
+
+        cart.products = [];
+
+        await cart.save();
+
+        res.send({ cart: cart?.toJSON({ virtuals: true }) });
+    } catch (error) {
+        res.status(500).send({ error: error.message });
+    }
+};
+
 module.exports = {
     getCartProducts,
     addProductToCart,
     deleteCartProduct,
+    emptyCart,
 };
