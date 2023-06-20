@@ -1,5 +1,4 @@
 const Cart = require("../models/cart");
-const User = require("../models/user");
 const Product = require("../models/product");
 
 // GET ALL USER CART ITEMS
@@ -8,9 +7,11 @@ const getCartProducts = async (req, res) => {
         // RETRIEVE THE USER ID FROM THE AUTH MIDDLEWARE
         const userId = req.user._id;
 
+        // GET THE CART DOCUMENT FOR THE USER
         const cart = await Cart.findOne({ user: userId });
 
-        res.send({ cart: cart.toJSON({ virtuals: true }) });
+        // SEND BACK THE CART DOCUMENT ALONG WITH THE VIRTUALS
+        res.send({ cart: cart?.toJSON({ virtuals: true }) });
     } catch (error) {
         res.status(500).send({ error: error.message });
     }

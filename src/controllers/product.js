@@ -100,7 +100,6 @@ const addNewProduct = async (req, res, next) => {
 
         // RESIZE THE UPLOADED IMAGE AND SAVE TO ASSETS/UPLOADS FOLDER
         await sharp(req.file.path).toFile(imagePath);
-        // .resize({ width: 500, height: 500 })
 
         // DELETE THE ORIGINAL UPLOADED IMAGE
         fs.unlinkSync(req.file.path);

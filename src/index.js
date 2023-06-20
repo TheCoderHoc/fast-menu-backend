@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 require("./config/db");
 const authRouter = require("./routes/auth");
+const userRouter = require("./routes/user");
 const productRouter = require("./routes/product");
 const cartRouter = require("./routes/cart");
 const favouriteRouter = require("./routes/favourites");
@@ -15,6 +16,7 @@ app.use(express.json());
 app.use(cors());
 
 app.use(authRouter);
+app.use(userRouter);
 app.use(productRouter);
 app.use(cartRouter);
 app.use(favouriteRouter);
