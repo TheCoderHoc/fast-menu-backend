@@ -1,6 +1,5 @@
 const fs = require("fs");
-const path = require("path");
-const sharp = require("sharp");
+const cloudinary = require("cloudinary");
 const Product = require("../models/product");
 
 // GET ALL PRODUCTS
@@ -94,19 +93,22 @@ const addNewProduct = async (req, res, next) => {
             throw new Error("Please provide a product image.");
         }
 
-        const imagePath =
-            path.join(__dirname, "../assets/uploads") +
-            `/${req.file.fieldname}-${Date.now()}.png`;
+        cloudinary.config({
+            cloud_name: process.env.CLOUDINARY_NAME,
+            api_key: process.env.CLOUDINARY_API_KEY,
+            api_secret: process.env.CLOUDINARY_API_SECRET,
+        });
 
-        // RESIZE THE UPLOADED IMAGE AND SAVE TO ASSETS/UPLOADS FOLDER
-        await sharp(req.file.path).toFile(imagePath);
+        const result = await cloudinary.v2.uploader.upload(req.file.path);
+
+        const { secure_url: imageUrl } = result;
 
         // DELETE THE ORIGINAL UPLOADED IMAGE
         fs.unlinkSync(req.file.path);
 
         const product = new Product({
             ...req.body,
-            image: imagePath,
+            image: imageUrl,
         });
 
         await product.save();
