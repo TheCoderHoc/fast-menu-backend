@@ -43,7 +43,6 @@ const getAllProducts = async (req, res) => {
         }
 
         const products = await Product.find(match)
-            .select("-image")
             .sort(sort)
             .limit(limit * 1)
             .skip((page - 1) * limit)
@@ -78,7 +77,7 @@ const getSingleProduct = async (req, res) => {
 // GET POPULAR PRODUCTS
 const getPopularProducts = async (req, res) => {
     try {
-        const products = await Product.find({ popular: true }).select("-image");
+        const products = await Product.find({ popular: true });
 
         res.send({ products });
     } catch (error) {
